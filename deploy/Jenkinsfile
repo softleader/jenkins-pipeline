@@ -7,7 +7,7 @@ pipeline {
 
         stage('pull'){
             steps {
-                bat "docler pull ${dockerRegistry}/${image}"
+                bat "docker pull ${dockerRegistry}/${image}"
             }
         }
         
