@@ -1,0 +1,39 @@
+#!groovy
+
+pipeline {
+    agent any 
+
+    stages {
+
+        stage('pull'){
+            steps {
+                bat "docker pull ${dockerRegistry}/${image}"
+            }
+        }
+        
+        stage('undeploy') {
+            steps {
+                script {
+                    try {
+                        bat "docker stop ${image}"
+                    } catch(Exception e) {
+                    }
+                    try {
+                        bat "docker rm ${image}"
+                    } catch(Exception e) {
+                    }
+                    try {
+                        bat "docker rmi ${dockerRegistry}/${image}"
+                    } catch(Exception e) {
+                    }
+                }
+            }
+        }
+       
+        stage('docker run') {
+            steps {
+                bat "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
+            }
+        }
+    }
+}
