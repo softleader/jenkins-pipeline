@@ -32,7 +32,7 @@ pipeline {
        
         stage('docker run') {
             steps {
-                bat "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${args} ${dockerRegistry}/${image}"
+                bat "docker run -itd -m ${memory} --memory-swap ${memory} --name ${image} --net softleader ${args} ${dockerRegistry}/${image}"
             }
         }
     }
