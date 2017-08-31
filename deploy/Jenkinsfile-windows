@@ -5,7 +5,7 @@ pipeline {
 
     stages {
 
-        stage('pull'){
+        stage('docker pull'){
             steps {
                 bat "docker pull ${dockerRegistry}/${image}"
             }
