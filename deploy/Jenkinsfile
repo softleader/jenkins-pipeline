@@ -7,7 +7,7 @@ pipeline {
 
         stage('pull'){
             steps {
-                sh "docler pull ${dockerRegistry}/${image}"
+                bat "docler pull ${dockerRegistry}/${image}"
             }
         }
         
@@ -15,15 +15,15 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh "docker stop ${image}"
+                        bat "docker stop ${image}"
                     } catch(Exception e) {
                     }
                     try {
-                        sh "docker rm ${image}"
+                        bat "docker rm ${image}"
                     } catch(Exception e) {
                     }
                     try {
-                        sh "docker rmi ${dockerRegistry}/${image}"
+                        bat "docker rmi ${dockerRegistry}/${image}"
                     } catch(Exception e) {
                     }
                 }
@@ -32,7 +32,7 @@ pipeline {
        
         stage('docker run') {
             steps {
-                sh "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
+                bat "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
             }
         }
     }
