@@ -7,7 +7,7 @@ pipeline {
 
         stage('pull'){
             steps {
-                sh "docler pull {build-jenkins}/${image}"
+                sh "docler pull ${docker-registry}/${image}"
             }
         }
         
@@ -23,7 +23,7 @@ pipeline {
                     } catch(Exception e) {
                     }
                     try {
-                        sh "docker rmi ${image}"
+                        sh "docker rmi ${docker-registry}/${image}"
                     } catch(Exception e) {
                     }
                 }
@@ -32,7 +32,7 @@ pipeline {
        
         stage('docker run') {
             steps {
-                sh "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${image}"
+                sh "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${docker-registry}/${image}"
             }
         }
     }
