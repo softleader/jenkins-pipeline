@@ -1,0 +1,44 @@
+#!groovy
+
+pipeline {
+    agent any 
+
+    stages {
+        stage('test') { 
+            steps { 
+                sh "mvn clean test"
+            }
+        }
+        
+        stage('package'){
+            steps {
+                sh "mvn -DskipTests package"
+            }
+        }
+        
+        stage('docker build') {
+            steps {
+                sh "docker build -t ${env.JOB_NAME} ."
+            }
+        }
+
+        stage('docker push') {
+            steps {
+                sh "docker push localhost:5000/${env.JOB_NAME}"
+            }
+        }
+
+        stage('webhook') {
+            steps {
+                sh "curl http://{deploy-jenkins}/job/{job-name}/buildWithParameters?token={token}&image=${env.JOB_NAME}"
+            }
+        }
+        
+        stage('results') {
+            steps { 
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archive 'target/*.jar'
+            }
+        }
+    }
+}

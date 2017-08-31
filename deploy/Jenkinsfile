@@ -1,0 +1,39 @@
+#!groovy
+
+pipeline {
+    agent any 
+
+    stages {
+
+        stage('pull'){
+            steps {
+                sh "docler pull {build-jenkins}/${image}"
+            }
+        }
+        
+        stage('undeploy') {
+            steps {
+                script {
+                    try {
+                        sh "docker stop ${image}"
+                    } catch(Exception e) {
+                    }
+                    try {
+                        sh "docker rm ${image}"
+                    } catch(Exception e) {
+                    }
+                    try {
+                        sh "docker rmi ${image}"
+                    } catch(Exception e) {
+                    }
+                }
+            }
+        }
+       
+        stage('docker run') {
+            steps {
+                sh "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${image}"
+            }
+        }
+    }
+}
