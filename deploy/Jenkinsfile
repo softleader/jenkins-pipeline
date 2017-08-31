@@ -7,7 +7,11 @@ pipeline {
 
         stage('pull'){
             steps {
-                ${command} "docker pull ${dockerRegistry}/${image}"
+                if (isUnix()) {
+                    sh "docker pull ${dockerRegistry}/${image}"
+                } else {
+                    bat "docker pull ${dockerRegistry}/${image}"
+                }
             }
         }
         
@@ -15,15 +19,27 @@ pipeline {
             steps {
                 script {
                     try {
-                        ${command} "docker stop ${image}"
+                        if (isUnix()) {
+                            sh "docker stop ${image}"
+                        } else {
+                            bat "docker stop ${image}"
+                        }
                     } catch(Exception e) {
                     }
                     try {
-                        ${command} "docker rm ${image}"
+                        if (isUnix()) {
+                            sh "docker rm ${image}"
+                        } else {
+                            bat "docker rm ${image}"
+                        }
                     } catch(Exception e) {
                     }
                     try {
-                        ${command} "docker rmi ${dockerRegistry}/${image}"
+                        if (isUnix()) {
+                            sh "docker rmi ${dockerRegistry}/${image}"
+                        } else {
+                            bat "docker rmi ${dockerRegistry}/${image}"
+                        }
                     } catch(Exception e) {
                     }
                 }
@@ -32,7 +48,11 @@ pipeline {
        
         stage('docker run') {
             steps {
-                ${command} "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
+                if (isUnix()) {
+                    sh "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
+                } else {
+                    bat "docker run -itd -m 1024m --memory-swap 1024m --name ${image} --net softleader ${dockerRegistry}/${image}"
+                }
             }
         }
     }
