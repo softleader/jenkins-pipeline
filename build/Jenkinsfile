@@ -4,6 +4,10 @@ pipeline {
     agent any 
 
     stages {
+        stage('clone') {
+            git "${repository}"
+        }
+        
         stage('test') { 
             steps { 
                 sh "mvn clean test"
