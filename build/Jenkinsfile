@@ -18,20 +18,20 @@ pipeline {
         
         stage('docker build') {
             steps {
-                sh "docker build -t ${env.JOB_NAME} ."
+                sh "docker build -t ${dockerRegistry}/${env.JOB_NAME} ."
             }
         }
-
+        
         stage('docker push') {
             steps {
-                sh "docker push localhost:5000/${env.JOB_NAME}"
+                sh "docker push ${dockerRegistry}/${env.JOB_NAME}"
+                sh "docker rmi ${dockerRegistry}/${env.JOB_NAME}"
             }
         }
-
+        
         stage('webhook') {
             steps {
-                sh "curl http://{deploy-jenkins}/job/{job-name}/buildWithParameters?token={token}&image=${env.JOB_NAME}"
-                // sh "curl http://192.168.1.90:8080/job/softleader-azalea-roster-cki/buildWithParameters?token=sleader&image=${env.JOB_NAME}"
+                sh "curl -v ${jenkinsHookUrl}/buildWithParameters?token=${token}\\&image=${env.JOB_NAME}\\&args=-v%20${dumps}:/dumps"
             }
         }
         
